@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Scholarship Monitoring System</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase JavaScript client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Application JavaScript -->
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <main class="container">
+
+    <header>
+      <p class="eyebrow">STUDENT SERVICES</p>
+      <h1>Scholarship Monitoring System</h1>
+      <p class="muted">
+        Academic compliance, evidence verification, and renewal tracking.
+      </p>
+    </header>
+
+    <!-- Setup notice -->
+    <section id="setupNotice" class="notice">
+      <strong>Setup required</strong>
+      <p>
+        Open <code>app.js</code> and enter your Supabase Project URL
+        and publishable (or legacy anon) key.
+        Never put a service-role or secret key in frontend code.
+      </p>
+    </section>
+
+    <!-- Login -->
+    <section id="authSection" class="panel">
+      <h2>Staff / Scholar Sign In</h2>
+
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button type="submit" id="loginButton">
+          Sign In
+        </button>
+      </form>
+
+      <p
+        id="authMessage"
+        class="message"
+        role="status"
+        aria-live="polite"
+      ></p>
+    </section>
+
+    <!-- Logged-in application -->
+    <section id="appSection" class="panel" hidden>
+
+      <div class="toolbar">
+        <div>
+          <h2 id="welcomeTitle">Account</h2>
+          <p id="roleLabel" class="muted"></p>
+        </div>
+
+        <button id="logoutButton" class="secondary" type="button">
+          Sign Out
+        </button>
+      </div>
+
+      <!-- ==============================================
+           STAFF SECTION
+           ============================================== -->
+      <section id="staffSection" hidden>
+
+        <!-- S04: Verification reason required -->
+        <h3>Staff Verification Test — S04</h3>
+
+        <p class="muted">
+          This test intentionally sends a blank return reason.
+          A secure backend should reject it.
+        </p>
+
+        <label for="submissionId">Submission UUID</label>
+        <input
+          id="submissionId"
+          type="text"
+          placeholder="Paste submission UUID"
+          autocomplete="off"
+        >
+
+        <button id="testReturnButton" type="button">
+          Test Return Without Reason
+        </button>
+
+        <p
+          id="rpcMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="rpcOutput" hidden></pre>
+
+        <!-- S05: Evaluation Gate -->
+        <hr>
+
+        <h3>Evaluation Gate — S05</h3>
+
+        <p>
+          This test checks whether evaluation is blocked
+          while evidence verification is pending.
+        </p>
+
+        <label for="evaluationTestSubmissionId">
+          Pending Submission UUID
+        </label>
+
+        <input
+          id="evaluationTestSubmissionId"
+          type="text"
+          placeholder="Paste pending submission UUID"
+          autocomplete="off"
+        >
+
+        <button id="testEvaluationGateButton" type="button">
+          Test Evaluation Gate
+        </button>
+
+        <p
+          id="evaluationGateMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="evaluationGateOutput" hidden></pre>
+
+        <!-- S06: Renewal Gate -->
+        <hr>
+
+        <h3>Renewal Gate — S06</h3>
+
+        <p>
+          This test checks whether renewal approval is blocked
+          before the required verification and evaluation checks.
+        </p>
+
+        <label for="renewalTestSubmissionId">
+          Submission UUID
+        </label>
+
+        <input
+          id="renewalTestSubmissionId"
+          type="text"
+          placeholder="Paste submission UUID"
+          autocomplete="off"
+        >
+
+        <button id="testRenewalGateButton" type="button">
+          Test Renewal Approval Gate
+        </button>
+
+        <p
+          id="renewalGateMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="renewalGateOutput" hidden></pre>
+
+        <!-- S08: Staff Audit History -->
+       
+<!-- S08: Staff Audit History -->
+<hr>
+
+<h3>Audit History Test — S08</h3>
+
+<p>
+  This test checks whether Scholarship Staff can read
+  recent audit history records.
+</p>
+
+<button id="testStaffAuditButton" type="button">
+  Test Staff Audit History
+</button>
+
+<p
+  id="staffAuditMessage"
+  class="message"
+  role="status"
+  aria-live="polite"
+></p>
+
+<pre id="staffAuditOutput" hidden></pre>
+
+
+      </section>
+
+      <!-- ==============================================
+           SCHOLAR SECTION
+           ============================================== -->
+      <section id="scholarSection" hidden>
+
+        <h3>Scholar Account</h3>
+
+        <p>
+          You are signed in as a Scholar.
+          Staff verification controls are not available to this account.
+        </p>
+
+        <!-- S03: Verification Authorization -->
+        <hr>
+
+        <h3>Authorization Test — S03</h3>
+
+        <p>
+          This test checks whether a Scholar is blocked
+          from verifying evidence by the backend.
+        </p>
+
+        <label for="scholarTestSubmissionId">
+          Submission UUID
+        </label>
+
+        <input
+          id="scholarTestSubmissionId"
+          type="text"
+          placeholder="Enter a test submission UUID"
+          autocomplete="off"
+        >
+
+        <button id="testScholarVerifyButton" type="button">
+          Test Scholar Cannot Verify
+        </button>
+
+        <p
+          id="scholarRpcMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="scholarRpcOutput" hidden></pre>
+
+        <!-- S07: Protected Fields -->
+        <hr>
+
+        <h3>Protected Fields Test — S07</h3>
+
+        <p>
+          This test checks whether a Scholar is prevented
+          from updating the protected verification_status field.
+        </p>
+
+        <label for="protectedFieldSubmissionId">
+          Submission UUID
+        </label>
+
+        <input
+          id="protectedFieldSubmissionId"
+          type="text"
+          placeholder="Enter submission UUID"
+          autocomplete="off"
+        >
+
+        <button id="testProtectedFieldsButton" type="button">
+          Test Protected Fields
+        </button>
+
+        <p
+          id="protectedFieldsMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="protectedFieldsOutput" hidden></pre>
+
+        <!-- S08: Scholar Audit Access -->
+        <hr>
+
+        <h3>Audit Access Test — S08</h3>
+
+        <p>
+          This test checks whether a Scholar is prevented
+          from reading staff-only audit history.
+        </p>
+
+        <button id="testScholarAuditButton" type="button">
+          Test Scholar Audit Access
+        </button>
+
+        <p
+          id="scholarAuditMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <pre id="scholarAuditOutput" hidden></pre>
+
+      </section>
+
+    </section>
+  </main>
+
+  <footer>
+    Student Scholarship Monitoring and Academic Compliance System · Test build
+  </footer>
+</body>
+</html>
